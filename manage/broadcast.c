@@ -195,7 +195,6 @@ void broadcast_proc(uint8 operate_dev_type, uint8 operate_dev_id,uint8 pisc_broa
 	printf("broadcast_proc,broadcast_pri_tmp: %d...\r\n",broadcast_pri_tmp);
 	while(list->broadcast_type)
 	{
-		printf("***********list->broadcast_type=%d",list->broadcast_type);
 		if(list->operate_dev_type==operate_dev_type
 			&& list->operate_dev_id==operate_dev_id
 			&& list->broadcast_type==pisc_broadcast_type)
@@ -209,7 +208,6 @@ void broadcast_proc(uint8 operate_dev_type, uint8 operate_dev_id,uint8 pisc_broa
 				broadcast_set_broadcast_operate_dev_id(operate_dev_id);
 				broadcast_set_broadcast_cycle_flag(list->cycle_flag);
 				broadcast_set_broadcast_mp3_decode_flag(list->mp3_decode_flag);
-
 
 				//有播放列表
 				if(list->get_list)
@@ -589,26 +587,24 @@ static void* broadcast_thread(void* param)
 	{
 		//主
 		if(pisc_get_master_status())
+		{
 			//当前正在播放MP3解码广播
-			 printf("broadcast_current.mp3_decode_flag=%d\n", broadcast_current.mp3_decode_flag);
 			if(broadcast_get_broadcast_mp3_decode_flag())
-			{	
+			{
 				//当前播放完毕
 				if(mp3_decode_get_is_playing()==0)
 				{
 					//如果有循环标志
 					if(broadcast_get_broadcast_cycle_flag())
-					{					
+					{
 						//重复播放
 						broadcast_proc(broadcast_get_broadcast_operate_dev_type(),broadcast_get_broadcast_operate_dev_id(),broadcast_get_broadcast_type());
 					}
 					//没有循环标志
 					else
 					{
-					
 						if(BROADCAST_NONE!=broadcast_get_broadcast_type())
 						{
-						
 							//停止广播
 							broadcast_stop_proc(broadcast_get_broadcast_type());
 						}

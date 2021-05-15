@@ -229,6 +229,8 @@ void  audio_broadcast_send(void)
 {
 	int len =0;
 char send_buf[1024*1024]={0x00};
+	if(pcm_ring_buf == NULL)
+		return;
  if(kring_buffer_len(pcm_ring_buf)>=1024)
 		{
 			if(kring_buffer_len(pcm_ring_buf) > 512*1024)
@@ -237,20 +239,22 @@ char send_buf[1024*1024]={0x00};
 			{
 			 len =kring_buffer_get(pcm_ring_buf,send_buf,1024);
 			}
-			
 
 			if(len >=1024)
 			{
 				//fwrite(send_buf,1,1024,pcm_data_file);
 				//printf("mp3_decode_get_is_playing.....==%d,%d\r\n",mp3_decode_get_is_playing(),get_live_bradcast());
+
 				if(mp3_decode_get_is_playing() == 0x01 || ( get_live_bradcast() == 0x01)|| (EmerGencyStatusGet() == 0x02))
 				{
 					led_ctrl(LED4_OCC,0);
 					return;
 				}
+				#if 1
 					led_ctrl(LED4_OCC,1);	
 					broadcast_audio_send_audio(broadcast_get_broadcast_operate_dev_type(),broadcast_get_broadcast_operate_dev_id(),send_buf,1024);
 					led_ctrl(LED4_OCC,0);
+				#endif	
 				//usleep(5000);
 			}
 		}
@@ -312,7 +316,7 @@ static void *soundcard_read_data_thread(void *param)
 	int read_size=0;
 	int ret_audio;
 	pcm_ring_buf = kring_bufer_alloc_init(2*1024*1024);//1M 音频
-	printf("========================\r\n");
+	printf("========================pcm_ring_buf=%p\r\n",pcm_ring_buf);
 	
 	/*创建一个保存PCM数据的文件*/
 	if((pcm_data_file = fopen("aenc.pcm", "wb")) == NULL)
@@ -326,6 +330,7 @@ static void *soundcard_read_data_thread(void *param)
 	{
 		AENC_StartEnc();//设置相关参数
 	}
+	
 	#if 0
 	audio_record_fd = soundcard_audio_init(AUDIO_SAMPLE_SPEED,AUDIO_SAMPLE_BITS,2, READ);
 	printf("===============xxx========%d=\r\n",audio_record_fd);
@@ -335,7 +340,7 @@ static void *soundcard_read_data_thread(void *param)
 		//exit(-1);
 	}	
 	#endif
-    printf("========================\r\n");
+    printf("========================ret_audio=%d\r\n",ret_audio);
 	pthread_create(&broad_pcm_thread_id,NULL,soundcard_pcm_broadcast_thread,NULL);
 
 	while(1)
@@ -344,30 +349,32 @@ static void *soundcard_read_data_thread(void *param)
 		T_AENC_STREAM tAencStream;
 		if(ret_audio == 0x00)
 		{
-		 int ret = AENC_GetStream_FromSnd(&tAencStream);
-		}
-		if(ret >0)
-		{
-			int frame_byte =tAencStream.u32Len/tAencStream.u32FrameNum;
-			
-			#if 1//只是取左声道
-			unsigned short pcm_left= 0;
-			for(int i = 0; i< tAencStream.u32FrameNum*2 ;i++)  //默认针对双通道 每个通道16bit ==2字节 取出左声道
+		    ret = AENC_GetStream_FromSnd(&tAencStream);
+			if(ret >0)
 			{
-			   if(i % 2 == 0x00)
-			   {
-				pcm_left= tAencStream.ps16Addr[i];
-				kring_buffer_put(pcm_ring_buf,&pcm_left,2);
-			   }
+				int frame_byte =tAencStream.u32Len/tAencStream.u32FrameNum;
+				int len = kring_buffer_len(pcm_ring_buf);
+				//printf("0000000000000000000000000le%d",len);
+				#if 1//只是取左声道
+				unsigned short pcm_left= 0;
+				for(int i = 0; i< tAencStream.u32FrameNum*2 ;i++)  //默认针对双通道 每个通道16bit ==2字节 取出左声道
+				{
+				   if(i % 2 == 0x00)
+				   {
+					pcm_left= tAencStream.ps16Addr[i];
+					kring_buffer_put(pcm_ring_buf,&pcm_left,2);
+				   }
+				}
+				#else
+				   //fwrite((char*)tAencStream.ps16Addr,tAencStream.u32FrameNum,frame_byte,pcm_data_file);
+					ret = kring_buffer_put(pcm_ring_buf,(char*)tAencStream.ps16Addr,tAencStream.u32Len);
+				#endif
+			     //printf("ret:%d,frame_byte:%d len:%d ,total_len:%d,frame_num:%d,%d\r\n",ret,frame_byte,ret,tAencStream.u32Len,tAencStream.u32FrameNum,kring_buffer_len(pcm_ring_buf));
+		         
+				 
 			}
-			#else
-			   //fwrite((char*)tAencStream.ps16Addr,tAencStream.u32FrameNum,frame_byte,pcm_data_file);
-				ret = kring_buffer_put(pcm_ring_buf,(char*)tAencStream.ps16Addr,tAencStream.u32Len);
-			#endif
-		     //printf("ret:%d,frame_byte:%d len:%d ,total_len:%d,frame_num:%d,%d\r\n",ret,frame_byte,ret,tAencStream.u32Len,tAencStream.u32FrameNum,kring_buffer_len(pcm_ring_buf));
-	         
-			 
 		}
+		
 	
 #if 0
 		static uint16 read_num=0;

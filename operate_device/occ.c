@@ -50,7 +50,7 @@ void occ_send_audio(void)
 	printf("occ send audio.......\r\n");
 	if(BH_TRUE==soundcard_get_data(CHANNEL_OCC,buf_tmp,&len_tmp))
 	{
-	#if 1
+	#if 0
 		static uint32 num_tmp=0;	
 		num_tmp++;
 		if((num_tmp%100)==0)
@@ -58,7 +58,7 @@ void occ_send_audio(void)
 			printf("occ_send_audio, len_tmp: %d\r\n",len_tmp);
 			print_buf((uint8 *)buf_tmp,30);
 		}
-		#endif	
+	#endif	
 		broadcast_audio_send_audio(broadcast_get_broadcast_operate_dev_type(),broadcast_get_broadcast_operate_dev_id(),(uint8 *)buf_tmp,len_tmp);
 	}
 }

@@ -14,7 +14,7 @@
 #define   PIN(n)         (n)
 #define   GPIO_PIN(x,y)  ((GPIO(x)-1)*32 +PIN(y))
 
-#if 0
+#if 1
 /*LED Ctrl GPIO */
 #define   LED60_SYSRUN      0
 #define   LED1_MANUAL       1
@@ -26,8 +26,7 @@
 #define   LED9_MP3          7
 #define   LED10_MIC         8
 #define   LED60_ERR         9
-#endif
-
+#else
 #define   LED60_SYSRUN   GPIO_PIN(GPIO(3),PIN(0))
 #define   LED1_MANUAL	 GPIO_PIN(GPIO(5),PIN(0))	
 #define   LED2_TMS		 GPIO_PIN(GPIO(5),PIN(1))	
@@ -38,6 +37,7 @@
 #define   LED9_MP3       GPIO_PIN(GPIO(5),PIN(6))		
 #define   LED10_MIC      GPIO_PIN(GPIO(5),PIN(7))		
 #define   LED60_ERR      GPIO_PIN(GPIO(5),PIN(8))		
+#endif
 
 
 

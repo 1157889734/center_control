@@ -190,7 +190,7 @@ int gpio_init(void)
 {
 
   int i = 0;
-  #if 1
+  #if 0
   gpio_defaultconfig(LED60_SYSRUN,0,1);
   gpio_defaultconfig(LED1_MANUAL,0,1);
   gpio_defaultconfig(LED2_TMS,0,1);

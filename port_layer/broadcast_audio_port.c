@@ -67,7 +67,7 @@ static void broadcast_audio_send_buf(uint8 *buf, uint16 length)
 		num_tmp++;
 		if((num_tmp%100)==0)
 		{
-			printf("broadcast_audio_send_buf: %d\r\n",send_len);
+			//printf("broadcast_audio_send_buf: %d\r\n",send_len);
 			print_buf(send_buf_tmp,30);
 
 		}

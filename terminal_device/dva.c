@@ -40,7 +40,7 @@ void dva_send_audio(void)
 	//printf("+++++++++++++++++++++dva_send_audio\r\n");
 	if(BH_TRUE==mp3_decoder_get_pcm_data(buf_tmp,512))
 	{
-	  #if 1
+	  #if 0
 		uint16 len_tmp=0;
 		static uint32 num_tmp=0;	
 		num_tmp++;
