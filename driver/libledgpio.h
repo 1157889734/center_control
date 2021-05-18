@@ -14,7 +14,7 @@
 #define   PIN(n)         (n)
 #define   GPIO_PIN(x,y)  ((GPIO(x)-1)*32 +PIN(y))
 
-#if 1
+#if 0
 /*LED Ctrl GPIO */
 #define   LED60_SYSRUN      0
 #define   LED1_MANUAL       1
@@ -34,8 +34,8 @@
 #define   LED4_OCC		 GPIO_PIN(GPIO(5),PIN(3))
 #define   LED5_ACTIVE    GPIO_PIN(GPIO(5),PIN(4))
 #define   LED8_MEDIA     GPIO_PIN(GPIO(5),PIN(5))		
-#define   LED9_MP3       GPIO_PIN(GPIO(5),PIN(6))		
-#define   LED10_MIC      GPIO_PIN(GPIO(5),PIN(7))		
+//#define   LED9_MP3       GPIO_PIN(GPIO(5),PIN(6))		
+//#define   LED10_MIC      GPIO_PIN(GPIO(5),PIN(7))		
 #define   LED60_ERR      GPIO_PIN(GPIO(5),PIN(8))		
 #endif
 
@@ -60,6 +60,11 @@
 #define EN_WDIL           GPIO_PIN(GPIO(3),PIN(1))
 #define FEED_WDIL         GPIO_PIN(GPIO(3),PIN(2))
 #define GPIO_WDIL         GPIO_PIN(GPIO(3),PIN(3))
+
+
+
+
+
 
 /**
  * @descripttion: GPIO init
@@ -90,6 +95,10 @@ int  gpio_output_ctrl(int gpio,int value);
  * @return: 
  */
 int  led_ctrl(int nled,int status);
+
+
+int  GPIO_Init(const int _iGpio,const int _iDir);
+
 
 
 

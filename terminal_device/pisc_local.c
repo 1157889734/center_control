@@ -134,7 +134,13 @@ void pisc_local_set_key_status(uint8 flag)
 		printf("pisc_local_set_key_status: %d\r\n",flag);
 		//led灯显示
 		 //led_onoff(KEY_LED_BIT,flag);
-		led_ctrl(LED5_ACTIVE,flag);
+		//gpio_output_ctrl(LED5_ACTIVE,flag);
+		if(flag == 0x00)
+			LED_Ctrl(LED_ACTIVE,LED_OFF);
+		else
+		{
+			LED_Ctrl(LED_ACTIVE,LED_ON);
+		}
 		
 		local_pisc_data_bak.signal_1.active_flag=flag;
 		//处理主备

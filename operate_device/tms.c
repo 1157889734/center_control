@@ -380,7 +380,9 @@ static void tms_skip_broadcast_trigger(tba_bus_pack_t *ReceiveMsg)
 
 static void tms_recv_pack_proc(uint8* buf)
 {	
-	led_toggle(TMS_LED_BIT);
+	//led_toggle(TMS_LED_BIT);
+	
+	LED_Toggle(LED_TMS);
 	if(pisc_get_work_mode() != PISC_ATC_MODE)return;
 	if(!pisc_get_master_status())return;
 	data_proc_matrix_set_default_data((tba_bus_pack_t *)buf);

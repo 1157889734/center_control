@@ -262,15 +262,15 @@ static void dcp_live_broadcast(tba_bus_pack_t *ReceiveMsg)
 
 	live_flag_tmp=ptr_tmp ->signal_1.live_broadcast_flag;
 	if(ptr_tmp ->signal_1.live_broadcast_flag)
-	{		
+	{	
 		//broadcast_proc(dev_type_tmp,dev_id_tmp,BROADCAST_LIVE);	//segment fault，不明原因
 		//led_onoff(MIC_LED_BIT,1);
-		led_ctrl(LED10_MIC,1);
+		//gpio_output_ctrl(LED10_MIC,1);
 	}
 	else
 	{
 		//broadcast_stop_proc(BROADCAST_LIVE);
-		led_ctrl(LED10_MIC,0);
+		//gpio_output_ctrl(LED10_MIC,0);
 	}	
 }
 

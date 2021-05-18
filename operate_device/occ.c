@@ -29,7 +29,7 @@ void occ_set_occ_status(uint8 flag)
 
 	//led灯显示
 	//led_onoff(OCC_LED_BIT,flag);
-	led_ctrl(LED4_OCC,flag);
+	LED_Ctrl(LED4_OCC,flag);
 
 	if(flag)
 	{

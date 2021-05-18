@@ -182,9 +182,9 @@ void broadcast_init(void)
 	led_onoff(MEDIA_LED_BIT,0);			
 	led_onoff(MIC_LED_BIT,0);	
 #endif
-    led_ctrl(LED9_MP3,0);
-    led_ctrl(LED8_MEDIA,0);
-	led_ctrl(LED10_MIC,0);
+    //gpio_output_ctrl(LED9_MP3,0);
+    //gpio_output_ctrl(LED8_MEDIA,0);
+	//gpio_output_ctrl(LED10_MIC,0);
 }
 
 
@@ -203,11 +203,6 @@ void broadcast_proc(uint8 operate_dev_type, uint8 operate_dev_id,uint8 pisc_broa
 	//当前广播优先级
 	broadcast_pri_tmp=broadcast_get_pri(operate_dev_type,operate_dev_id,broadcast_get_broadcast_type());
 	printf("broadcast_proc,broadcast_pri_tmp: %d...\r\n",broadcast_pri_tmp);
-	printf("list->operate_dev_type=%d----operate_dev_type=%d\n",list->operate_dev_type,operate_dev_type);	
-	printf("list->operate_dev_id=%d----operate_dev_id=%d\n",list->operate_dev_id,operate_dev_id);
-	printf("list->broadcast_type=%d----pisc_broadcast_type=%d\n",list->broadcast_type,pisc_broadcast_type);
-
-	
 	while(list->broadcast_type)
 	{
 		if(list->operate_dev_type==operate_dev_type
@@ -253,7 +248,7 @@ void broadcast_proc(uint8 operate_dev_type, uint8 operate_dev_id,uint8 pisc_broa
 						
 						//亮mp3灯
 						//led_onoff(MP3_LED_BIT,1);	
-						led_ctrl(LED9_MP3,1);					
+						gpio_output_ctrl(LED9_MP3,1);					
 					}
 
 					//客室中文显示设置
@@ -283,7 +278,7 @@ void broadcast_stop_proc(uint8 pisc_broadcast_type)
 				mp3_decoder_stop_play(CHANNEL_LEFT);
 				//mp3灯
 				//led_onoff(MP3_LED_BIT,0);	
-				led_ctrl(LED9_MP3,0);			
+				gpio_output_ctrl(LED9_MP3,0);			
 			}
 			if(list->cycle_flag)
 			{

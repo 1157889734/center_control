@@ -142,6 +142,9 @@ static int write_gpio(const int gpio, int value)
   close(fd);
   return 0;
 }
+
+
+
 static int gpio_value(const int gpio)
 {
   int fd = -1;
@@ -256,6 +259,41 @@ int gpio_init(void)
   return 0;
 }
 
+
+int  GPIO_Init(const int _iGpio,const int _iDir)
+{ 
+ int iRet = -1;
+ if (export_gpio(_iGpio) == 0)
+    {
+      if (_iDir == 0)
+      {
+        if (set_direction_gpio(_iGpio, "out") != 0)
+        {
+          
+          printf("[gpio]: error init gpio:%d,set_direction:%d\r\n", _iGpio,_iDir);
+        }else
+        {
+            iRet = 0;
+        }
+        
+      }
+      else
+      {
+        if (set_direction_gpio(_iGpio, "in") != 0)
+        {
+          iRet = -1;
+          printf("[gpio]:error init gpio:%d,set_direction:%d\r\n", _iGpio, _iDir);
+        }else
+        {
+              iRet = 0;
+        }
+        
+      }
+    }
+    return iRet;
+}
+
+
 /**
  * @descripttion: get gpio value
  * @param {in} gpio gpio number
@@ -278,16 +316,8 @@ int gpio_input_value(int gpio)
  */
 int gpio_output_ctrl(int gpio, int value)
 {
-  if (check_gpios_isexist(gpio) == 0x00)
-  {
-    return write_gpio(gpio, value);
-  }
-  else
-  {
-    printf("gpio %d is not exsit!\r\n", gpio);
-  }
+    return write_gpio(gpio, value);  
 
-  return -1;
 }
 
 

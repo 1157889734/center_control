@@ -247,13 +247,13 @@ char send_buf[1024*1024]={0x00};
 
 				if(mp3_decode_get_is_playing() == 0x01 || ( get_live_bradcast() == 0x01)|| (EmerGencyStatusGet() == 0x02))
 				{
-					led_ctrl(LED4_OCC,0);
+					gpio_output_ctrl(LED4_OCC,0);
 					return;
 				}
 				#if 1
-					led_ctrl(LED4_OCC,1);	
+					gpio_output_ctrl(LED4_OCC,1);	
 					broadcast_audio_send_audio(broadcast_get_broadcast_operate_dev_type(),broadcast_get_broadcast_operate_dev_id(),send_buf,1024);
-					led_ctrl(LED4_OCC,0);
+					gpio_output_ctrl(LED4_OCC,0);
 				#endif	
 				//usleep(5000);
 			}

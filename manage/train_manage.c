@@ -32,7 +32,8 @@ static void* train_manage_thread(void* param)
 {	
 	static uint8 num_tmp=0;
 	printf("train_manage_thread start....\r\n");
-
+	
+    LED_Toggle(LED_SYS_RUN);
 	while(1)
 	{
 		usleep(500*1000);

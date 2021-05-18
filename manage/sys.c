@@ -23,6 +23,7 @@ void sys_init(void)
 {	
 	soundcard_init();
 	io_init();
+	LED_Init();
 	//led_init();
 	gpio_init();
 	data_proc_matrix_init();
