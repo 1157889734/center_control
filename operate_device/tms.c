@@ -41,6 +41,8 @@ static void tms_set_dir(tba_bus_pack_t *ReceiveMsg);
 static void tms_emergency_trigger(tba_bus_pack_t *ReceiveMsg);
 //tms设置循环广播触发
 static void tms_cycle_broadcast_trigger(tba_bus_pack_t *ReceiveMsg);
+static void tms_skip_broadcast_trigger(tba_bus_pack_t *ReceiveMsg);
+
 
 
 static dev_proc_t tms_proc_table_M[] = 
@@ -71,6 +73,8 @@ static dev_proc_t tms_proc_table_M[] =
 
 	{TAB_BUS_PACK_HEAD_LEN+34,		0,		BIT_8,	UNEQUAL,	0,	(MsgHandler_Callback)tms_emergency_trigger				},	//紧急广播触发
 	{TAB_BUS_PACK_HEAD_LEN+37,		0,		BIT_8,	UNEQUAL,	0,	(MsgHandler_Callback)tms_cycle_broadcast_trigger				},	//紧急广播触发
+	
+	{TAB_BUS_PACK_HEAD_LEN+39,		0,		BIT_8,	UNEQUAL,	0,	(MsgHandler_Callback)tms_skip_broadcast_trigger				},	//越站广播触发
 
 	{TAB_BUS_PACK_HEAD_LEN, 		0,		BIT_4,	WHATEVER,	0,	(MsgHandler_Callback)tms_recv_pack_proc					},	
 
@@ -332,7 +336,8 @@ static void tms_stop_broadcast(tba_bus_pack_t *ReceiveMsg)
 	if(tms_recv_pack_p->manual_broadcast_stop)
 	{		
 		if(BROADCAST_PRE==broadcast_get_broadcast_type())broadcast_stop_proc(BROADCAST_PRE);
-		if(BROADCAST_ARRIVE==broadcast_get_broadcast_type())broadcast_stop_proc(BROADCAST_ARRIVE);
+		if(BROADCAST_ARRIVE==broadcast_get_broadcast_type())broadcast_stop_proc(BROADCAST_ARRIVE);		
+		if(BROADCAST_SKIP==broadcast_get_broadcast_type())broadcast_stop_proc(BROADCAST_SKIP);
 	}
 }
 
@@ -353,6 +358,24 @@ static void tms_cycle_broadcast_trigger(tba_bus_pack_t *ReceiveMsg)
 		broadcast_stop_proc(BROADCAST_URGENT);	
 	}	
 }
+
+static void tms_skip_broadcast_trigger(tba_bus_pack_t *ReceiveMsg)
+{
+
+	tms_recv_pack_t  *tms_recv_pack_p=(tms_recv_pack_t	*)ReceiveMsg->app_data;
+	if(pisc_get_work_mode() != PISC_ATC_MODE)return;
+	if(pisc_get_master_status()!=MASTER_STATUS)return;	
+	printf("tms_skip_broadcast_trigger: %d\r\n",tms_recv_pack_p->skip_flag);	
+	if(tms_recv_pack_p->skip_flag)
+	{		
+		broadcast_proc(ReceiveMsg->src_dev_type,ReceiveMsg->src_dev_id,BROADCAST_SKIP);
+	}
+	
+	tms_autolcd_sendData();
+}
+
+
+
 
 
 static void tms_recv_pack_proc(uint8* buf)

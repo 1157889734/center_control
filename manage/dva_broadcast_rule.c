@@ -103,5 +103,18 @@ void dva_broadcast_rule_get_urgent_list(uint16* list, uint8* language_list, uint
 	*list_num=1;
 }
 
+void dva_broadcast_rule_get_skip_list(uint16* list, uint8* language_list, uint16* list_num)
+{
+	list[0]=1;
+	language_list[0]=LANGUAGE_C;
+	list[1]=1;
+	language_list[1]=LANGUAGE_E;
+	*list_num=1;
+
+	printf("list********\n");
+
+}
+
+
 
 

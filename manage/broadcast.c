@@ -27,11 +27,13 @@ static void broadcast_urgent(void);
 static void broadcast_urgent_stop(void);
 static void broadcast_close_door(void);
 static void broadcast_pre(void);
+static void broadcast_skip(void);
 static void broadcast_arrived(void);
 static void broadcast_occ_stop(void);
 static void broadcast_closedoor_stop(void);
 static void broadcast_pre_stop(void);
 static void broadcast_arr_stop(void);
+static void broadcast_skip_stop(void);
 static void broadcast_media_stop(void);
 
 
@@ -80,13 +82,17 @@ static broadcast_proc_list_t broadcast_proc_list[]=
 	{DEV_TYPE_TMS,		2,BROADCAST_PRE,	0,		PRI_NONE,	"tms_2_pre",{0},0,MP3_DECODER,MP3_PRE_PATH,LCU_LED_PRE_PATH,	broadcast_pre,	dva_broadcast_rule_get_pre_list,		dva_send_audio, 	broadcast_pre_stop},
 	{DEV_TYPE_TMS,		1,BROADCAST_ARRIVE,0,		PRI_NONE,	"tms_1_arr",{0},0,MP3_DECODER,MP3_ARR_PATH,LCU_LED_ARR_PATH,	broadcast_arrived,dva_broadcast_rule_get_arr_list,	dva_send_audio, 	broadcast_arr_stop},	
 	{DEV_TYPE_TMS,		2,BROADCAST_ARRIVE,	0,	PRI_NONE,	"tms_2_arr",{0},0,MP3_DECODER,MP3_ARR_PATH,LCU_LED_ARR_PATH,	broadcast_arrived,dva_broadcast_rule_get_arr_list,	dva_send_audio, 	broadcast_arr_stop},	
+	{DEV_TYPE_TMS,   	1,BROADCAST_SKIP,0,		PRI_NONE, "tms_1_skip",{0},0,MP3_DECODER,MP3_SKIP_PATH,LCU_LED_SKIP_PATH,broadcast_skip,dva_broadcast_rule_get_skip_list,dva_send_audio,broadcast_skip_stop},	
+	{DEV_TYPE_TMS, 		2,BROADCAST_SKIP,0,		PRI_NONE, "tms_2_skip",{0},0,MP3_DECODER,MP3_SKIP_PATH,LCU_LED_SKIP_PATH,broadcast_skip,dva_broadcast_rule_get_skip_list,dva_send_audio,broadcast_skip_stop},
+
 	{DEV_TYPE_PISC,	1,BROADCAST_PRE,	0,		PRI_NONE,	"pisc_1_pre",{0},0,MP3_DECODER,MP3_PRE_PATH,LCU_LED_PRE_PATH,	broadcast_pre,		dva_broadcast_rule_get_pre_list,	dva_send_audio, 	broadcast_pre_stop},
 	{DEV_TYPE_PISC,	2,BROADCAST_PRE,	0,		PRI_NONE,	"pisc_2_pre",{0},0,MP3_DECODER,MP3_PRE_PATH,LCU_LED_PRE_PATH,	broadcast_pre,		dva_broadcast_rule_get_pre_list,		dva_send_audio, 	broadcast_pre_stop},
 	{DEV_TYPE_PISC,	1,BROADCAST_ARRIVE,0,		PRI_NONE,	"pisc_1_arr",{0},0,MP3_DECODER,MP3_ARR_PATH,LCU_LED_ARR_PATH,	broadcast_arrived,dva_broadcast_rule_get_arr_list,	dva_send_audio, 	broadcast_arr_stop},	
 	{DEV_TYPE_PISC,	2,BROADCAST_ARRIVE,0,		PRI_NONE,	"pisc_2_arr",{0},0,MP3_DECODER,MP3_ARR_PATH,LCU_LED_ARR_PATH,	broadcast_arrived,dva_broadcast_rule_get_arr_list,	dva_send_audio, 	broadcast_arr_stop},	
 	{DEV_TYPE_PISC,	1,BROADCAST_MEDIA,	0,	PRI_NONE,	"pisc_1_media",{0},0,NO_MP3_DECODER,"","",	broadcast_media,	NULL,	media_send_audio,	broadcast_media_stop},	
 	{DEV_TYPE_PISC,	2,BROADCAST_MEDIA,0,		PRI_NONE,	"pisc_2_media",{0},0,NO_MP3_DECODER,"","",	broadcast_media,	NULL,	media_send_audio,	broadcast_media_stop},	
-
+	{DEV_TYPE_PISC, 1,BROADCAST_SKIP,0,		PRI_NONE, "pisc_1_skip",{0},0,MP3_DECODER,MP3_SKIP_PATH,LCU_LED_SKIP_PATH,broadcast_skip,dva_broadcast_rule_get_skip_list,dva_send_audio,broadcast_skip_stop},	
+	{DEV_TYPE_PISC, 2,BROADCAST_SKIP,0,		PRI_NONE, "pisc_2_skip",{0},0,MP3_DECODER,MP3_SKIP_PATH,LCU_LED_SKIP_PATH,broadcast_skip,dva_broadcast_rule_get_skip_list,dva_send_audio,broadcast_skip_stop},
 
 	{0,0,0,0,PRI_NONE,"",{0},0,NO_MP3_DECODER,"","",NULL,NULL,NULL,NULL,},
 };
@@ -128,11 +134,15 @@ typedef struct
 	uint8 tms_1_pre;
 	uint8 tms_2_pre;	
 	uint8 tms_1_arr;
-	uint8 tms_2_arr;	
+	uint8 tms_2_arr;
+	uint8 tms_1_skip;
+	uint8 tms_2_skip;
 	uint8 pisc_1_pre;
 	uint8 pisc_2_pre;	
 	uint8 pisc_1_arr;
-	uint8 pisc_2_arr;	
+	uint8 pisc_2_arr;
+	uint8 pisc_1_skip;
+	uint8 pisc_2_skip;	
 	uint8 media_1;
 	uint8 media_2;	
 	uint8 reserve[4];
@@ -193,6 +203,11 @@ void broadcast_proc(uint8 operate_dev_type, uint8 operate_dev_id,uint8 pisc_broa
 	//当前广播优先级
 	broadcast_pri_tmp=broadcast_get_pri(operate_dev_type,operate_dev_id,broadcast_get_broadcast_type());
 	printf("broadcast_proc,broadcast_pri_tmp: %d...\r\n",broadcast_pri_tmp);
+	printf("list->operate_dev_type=%d----operate_dev_type=%d\n",list->operate_dev_type,operate_dev_type);	
+	printf("list->operate_dev_id=%d----operate_dev_id=%d\n",list->operate_dev_id,operate_dev_id);
+	printf("list->broadcast_type=%d----pisc_broadcast_type=%d\n",list->broadcast_type,pisc_broadcast_type);
+
+	
 	while(list->broadcast_type)
 	{
 		if(list->operate_dev_type==operate_dev_type
@@ -310,6 +325,11 @@ void broadcast_send_pri(void)
 	broadcast_priority.tms_2_arr=broadcast_get_pri(DEV_TYPE_TMS,2,BROADCAST_ARRIVE);
 	broadcast_priority.tms_1_pre=broadcast_get_pri(DEV_TYPE_TMS,1,BROADCAST_PRE);
 	broadcast_priority.tms_2_pre=broadcast_get_pri(DEV_TYPE_TMS,2,BROADCAST_PRE);
+	
+	broadcast_priority.tms_1_skip=broadcast_get_pri(DEV_TYPE_TMS,1,BROADCAST_SKIP);
+	broadcast_priority.tms_2_skip=broadcast_get_pri(DEV_TYPE_TMS,2,BROADCAST_SKIP);
+
+	
 	broadcast_priority.tms_1_urgent=broadcast_get_pri(DEV_TYPE_TMS,1,BROADCAST_URGENT);
 	broadcast_priority.tms_2_urgent=broadcast_get_pri(DEV_TYPE_TMS,2,BROADCAST_URGENT);
 	broadcast_priority.tms_1_closedoor=broadcast_get_pri(DEV_TYPE_TMS,1,BROADCAST_CLOSE_DOOR);
@@ -323,6 +343,10 @@ void broadcast_send_pri(void)
 	broadcast_priority.pisc_2_closedoor=broadcast_get_pri(DEV_TYPE_PISC,2,BROADCAST_CLOSE_DOOR);
 	broadcast_priority.pisc_1_occ=broadcast_get_pri(DEV_TYPE_PISC,1,BROADCAST_OCC);
 	broadcast_priority.pisc_2_occ=broadcast_get_pri(DEV_TYPE_PISC,2,BROADCAST_OCC);
+
+	broadcast_priority.pisc_1_skip=broadcast_get_pri(DEV_TYPE_PISC,1,BROADCAST_SKIP);
+	broadcast_priority.pisc_2_skip=broadcast_get_pri(DEV_TYPE_PISC,2,BROADCAST_SKIP);
+	
 
 	broadcast_priority.media_1=broadcast_get_pri(DEV_TYPE_PISC,1,BROADCAST_MEDIA);
 	broadcast_priority.media_2=broadcast_get_pri(DEV_TYPE_PISC,2,BROADCAST_MEDIA);
@@ -478,6 +502,10 @@ static void broadcast_close_door(void)
 static void broadcast_pre(void)
 {
 }
+static void broadcast_skip(void)
+{
+
+}
 static void broadcast_pre_stop(void)
 {	
 
@@ -490,7 +518,10 @@ static void broadcast_arrived(void)
 static void broadcast_arr_stop(void)
 {	
 }
+static void broadcast_skip_stop(void)
+{
 
+}
 static void broadcast_closedoor_stop(void)
 {	
 }

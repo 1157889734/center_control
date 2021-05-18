@@ -16,6 +16,7 @@
 void dva_broadcast_rule_get_pre_list(uint16* pre_list, uint8* language_list, uint16* pre_list_num);
 void dva_broadcast_rule_get_arr_list(uint16* pre_list,  uint8* language_list,uint16* pre_list_num);
 void dva_broadcast_rule_get_urgent_list(uint16* list,  uint8* language_list,uint16* list_num);
+void dva_broadcast_rule_get_skip_list(uint16* list,  uint8* language_list,uint16* list_num);
 
 
 #endif
