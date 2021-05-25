@@ -354,7 +354,6 @@ static void *soundcard_read_data_thread(void *param)
 			{
 				int frame_byte =tAencStream.u32Len/tAencStream.u32FrameNum;
 				int len = kring_buffer_len(pcm_ring_buf);
-				//printf("0000000000000000000000000le%d",len);
 				#if 1//只是取左声道
 				unsigned short pcm_left= 0;
 				for(int i = 0; i< tAencStream.u32FrameNum*2 ;i++)  //默认针对双通道 每个通道16bit ==2字节 取出左声道

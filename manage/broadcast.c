@@ -248,7 +248,7 @@ void broadcast_proc(uint8 operate_dev_type, uint8 operate_dev_id,uint8 pisc_broa
 						
 						//亮mp3灯
 						//led_onoff(MP3_LED_BIT,1);	
-						gpio_output_ctrl(LED9_MP3,1);					
+						gpio_output_ctrl(LED8_MEDIA,1);					
 					}
 
 					//客室中文显示设置
@@ -278,7 +278,7 @@ void broadcast_stop_proc(uint8 pisc_broadcast_type)
 				mp3_decoder_stop_play(CHANNEL_LEFT);
 				//mp3灯
 				//led_onoff(MP3_LED_BIT,0);	
-				gpio_output_ctrl(LED9_MP3,0);			
+				gpio_output_ctrl(LED8_MEDIA,0);			
 			}
 			if(list->cycle_flag)
 			{

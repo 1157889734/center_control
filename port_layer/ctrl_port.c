@@ -167,6 +167,7 @@ static void* ctrl_port_thread(void* param)
 
 	while(1)
 	{		
+		
 		//读取socket		
 		length=recvfrom(cmd_socket_fd, cmd_recv_buf,sizeof(cmd_recv_buf), 0, (struct sockaddr *)&remoteaddr, &socklen);
 		

@@ -50,6 +50,8 @@ void master_proc(void)
 	//sleep(1);	
 	//gpio_output_ctrl(LED60_SYSRUN,0);
 	//对端中央控制器故障
+	
+	LED_Toggle(LED_SYS_RUN);
 	if(DEV_STATUS_OK!=dev_status_get_dev_status(DEV_TYPE_PISC,pisc_local_get_other_dev_id()))
 	{
 		master_type_tmp=MASTER_TYPE_OTHER_PISC_ERROR;

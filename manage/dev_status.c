@@ -209,7 +209,7 @@ void dev_status_set_dev_status(uint8 dev_type, uint8 dev_id, uint8 status)
 				//获得设备状态的名称
 				dev_status_get_dev_status_name(dev_status_table[i].dev_status,dev_status_table[i].dev_status_name);
 				//写入日志
-				//log_write_dev_status(dev_status_table[i].dev_name,dev_status_table[i].dev_status_name);
+				log_write_dev_status(dev_status_table[i].dev_name,dev_status_table[i].dev_status_name);
 				
 			}
 			return;
@@ -233,7 +233,7 @@ static void* dev_status_thread(void* param)
 			{
 				//填充设备状态
 				dev_status_set_dev_status(dev_status_table[i].dev_type,dev_status_table[i].dev_id,DEV_STATUS_ERROR);
-				//printf("+++++++table_dev_type:%d,id:%d,PisLocal_devid:%d\r\n",dev_status_table[i].dev_type,dev_status_table[i].dev_id,pisc_local_get_my_dev_id());
+				printf("+++++++table_dev_type:%d,id:%d,PisLocal_devid:%d\r\n",dev_status_table[i].dev_type,dev_status_table[i].dev_id,pisc_local_get_my_dev_id());
 				if(DEV_TYPE_PISC==dev_status_table[i].dev_type && (pisc_local_get_my_dev_id()!=dev_status_table[i].dev_id))
 				{
 					//对端故障，处理主备

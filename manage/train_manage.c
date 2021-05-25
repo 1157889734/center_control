@@ -33,7 +33,6 @@ static void* train_manage_thread(void* param)
 	static uint8 num_tmp=0;
 	printf("train_manage_thread start....\r\n");
 	
-    LED_Toggle(LED_SYS_RUN);
 	while(1)
 	{
 		usleep(500*1000);
@@ -42,13 +41,14 @@ static void* train_manage_thread(void* param)
 		pisc_local_send_default_data();
 		//获得配置文件的优先级
 		broadcast_get_conf_pri();
-
+		
 		//主机
 		if(pisc_get_master_status())
 		{
 			//5秒钟
 			if((num_tmp%10)==0)
 			{
+				
 				//车头屏显示
 				head_led_send_content();
 				//客室屏显示
