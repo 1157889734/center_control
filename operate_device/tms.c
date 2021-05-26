@@ -21,6 +21,8 @@
 #define TMS_DOOR_RIGHT 2
 #define TMS_DOOR_BOTH_SIDE 3
 
+
+
 //tms设置时间
 static void tms_set_time(tba_bus_pack_t *ReceiveMsg);
 //门关好
@@ -381,7 +383,6 @@ static void tms_skip_broadcast_trigger(tba_bus_pack_t *ReceiveMsg)
 static void tms_recv_pack_proc(uint8* buf)
 {	
 	//led_toggle(TMS_LED_BIT);
-	
 	LED_Toggle(LED_TMS);
 	if(pisc_get_work_mode() != PISC_ATC_MODE)return;
 	if(!pisc_get_master_status())return;

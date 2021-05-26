@@ -24,6 +24,8 @@
 #define CTRL_CMD_FEP		        (0x0003)
 
 
+
+
 //typedef void (*MsgHandler_Callback)(uint8* buf );
 typedef void (*MsgHandler_Callback)(tba_bus_pack_t *);
 
@@ -68,6 +70,7 @@ void data_proc_matrix_init_default_data(uint8 dev_type, uint8 dev_id);
 void data_proc_matrix_add_device_to_matrix_table(uint8 device_type, cmd_matrix_t *mode_cmd_tbl);
 void data_proc_matrix_Dispatch(uint8 dev_type, uint8 dev_id,uint16 cmd, uint8 *buf, uint16 len, uint8 matrix_index_len);
 void data_proc_matrix_set_default_data(tba_bus_pack_t *ReceiveMsg);
+uint8 get_tms_status(void);
 
 
 

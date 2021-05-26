@@ -19,6 +19,8 @@
 #include"include.h"
 #include "../driver/libledgpio.h"
 #define CHANNEL_OCC	(CHANNEL_LEFT)
+static uint8 g_occ_status = 0;
+
 
 void occ_init(void)
 {
@@ -50,6 +52,7 @@ void occ_send_audio(void)
 	printf("occ send audio.......\r\n");
 	if(BH_TRUE==soundcard_get_data(CHANNEL_OCC,buf_tmp,&len_tmp))
 	{
+		set_occ_status(STATUS_ON);
 	#if 0
 		static uint32 num_tmp=0;	
 		num_tmp++;
@@ -61,6 +64,18 @@ void occ_send_audio(void)
 	#endif	
 		broadcast_audio_send_audio(broadcast_get_broadcast_operate_dev_type(),broadcast_get_broadcast_operate_dev_id(),(uint8 *)buf_tmp,len_tmp);
 	}
+	
+	set_occ_status(STATUS_OFF);
+}
+
+
+uint8 get_occ_status(void)
+{
+	return g_occ_status;
+}
+void set_occ_status(uint8 status)
+{
+	 g_occ_status = status; 
 }
 
 

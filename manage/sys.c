@@ -63,6 +63,8 @@ void thread_init(void)
 	mp3_decoder_thread_install();
 	//广播
 	broadcast_thread_install();
+	//LED
+	led_thread_install();
 
 }
 

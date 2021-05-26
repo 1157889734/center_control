@@ -33,9 +33,9 @@
 #define   LED3_ATC		 GPIO_PIN(GPIO(5),PIN(2))	
 #define   LED4_OCC		 GPIO_PIN(GPIO(5),PIN(3))
 #define   LED5_ACTIVE    GPIO_PIN(GPIO(5),PIN(4))
-#define   LED8_MEDIA     GPIO_PIN(GPIO(5),PIN(5))		
+//#define   LED8_MEDIA     GPIO_PIN(GPIO(5),PIN(5))		
 //#define   LED9_MP3       GPIO_PIN(GPIO(5),PIN(6))		
-//#define   LED10_MIC      GPIO_PIN(GPIO(5),PIN(7))		
+#define   LED10_MIC      GPIO_PIN(GPIO(5),PIN(7))		
 #define   LED60_ERR      GPIO_PIN(GPIO(5),PIN(8))		
 #endif
 

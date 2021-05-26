@@ -43,6 +43,8 @@
 
 
 
+#define TMS_STATUS_ON 1
+#define TMS_STATUS_OFF 0
 
 //初始化设备有效状态
 void dev_status_init_dev_valid(uint8 dev_type);
@@ -54,6 +56,8 @@ uint8 dev_status_get_dev_status(uint8 dev_type,uint8 dev_id);
 //设置设备状态
 void dev_status_set_dev_status(uint8 dev_type, uint8 dev_id, uint8 status);
 void	dev_status_thread_install(void);
+uint8 get_device_state(void);
+uint8 get_tms_status(void);
 
 
 #endif

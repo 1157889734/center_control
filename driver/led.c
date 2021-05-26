@@ -8,6 +8,12 @@
 #include "../include/include.h"
 #include "libledgpio.h"
 #include "led.h"
+#include "../terminal_device/pisc_local.h"
+#include "../operate_device/pisc.h"
+#include "../operate_device/tms.h"
+#include "../process_matrix/data_proc_matrix.h"
+#include "../manage/dev_status.h"
+
 
 #define CHIP_ADDR   0x20
 #define I2C_DEV_PATH "/dev/i2c-0"
@@ -19,6 +25,9 @@
 static int i2c_fd;
 
 static uint8 led_onoff_status=0xff;
+
+static pthread_t led_thread_id=-1;//线程id
+
 #if 0
 void led_init(void)
 {
@@ -141,7 +150,7 @@ static int  _LED_IO_CTRL(const int _iled,const int _iValue)
 		    iGpio = LED5_ACTIVE;
 			break;
 		case LED_MIC:
-			iGpio = LED8_MEDIA;
+			iGpio = LED10_MIC;
 			break;
 		case LED_ERR:
 			iGpio = LED60_ERR;
@@ -171,7 +180,7 @@ void LED_Init(void)
 	GPIO_Init(LED3_ATC,0);
 	GPIO_Init(LED4_OCC,0);
 	GPIO_Init(LED5_ACTIVE,0);
-	GPIO_Init(LED8_MEDIA,0);
+	GPIO_Init(LED10_MIC,0);
 	GPIO_Init(LED60_ERR,0);
    
     _LED_IO_CTRL(LED_SYS_RUN,LED_OFF);
@@ -200,6 +209,55 @@ int  LED_Toggle(const int _iLed)
 	value  = !value;
     _LED_IO_CTRL(_iLed,value);
 	
+}
+
+
+
+
+
+
+void led_thread(void)
+{
+	pthread_detach(pthread_self());
+	while(1)
+	{
+		if(pisc_local_get_key_status())		
+			LED_Ctrl(LED_ACTIVE,LED_ON);		
+		else			
+			LED_Ctrl(LED_ACTIVE,LED_OFF);
+
+		if(pisc_get_work_mode() == PISC_ATC_MODE)			
+			LED_Ctrl(LED_ATC,LED_ON);		
+		else			
+			LED_Ctrl(LED_ATC,LED_OFF);	
+
+		if(pisc_get_work_mode() == PISC_DCP_MANUAL_MODE)			
+			LED_Ctrl(LED_MANUAL,LED_ON);		
+		else			
+			LED_Ctrl(LED_MANUAL,LED_OFF);	
+
+		if(get_occ_status() == STATUS_ON)
+			LED_Ctrl(LED_OCC,LED_ON);		
+		else			
+			LED_Ctrl(LED_OCC,LED_OFF);	
+
+		//if(get_tms_status() == TMS_STATUS_ON)				
+		//	LED_Ctrl(LED_TMS,LED_ON);
+		//else			
+		//	LED_Ctrl(LED_TMS,LED_OFF);
+		if(get_device_state() == STATUS_ON)			
+			LED_Ctrl(LED_ERR,LED_ON);
+		else
+			LED_Ctrl(LED_ERR,LED_OFF);
+	}
+}
+
+void led_thread_install(void)
+{
+
+	ThreadCreate(&led_thread_id, led_thread, NULL); 	//PA内部协议数据采集线程创建
+	return;
+
 }
 
 

@@ -63,14 +63,18 @@ static void data_proc_matrix_get_default_data(uint8 dev_type, uint8 dev_id, uint
 	{
 		if(dev_type==dev_pack_tmp->dev_type && dev_id==dev_pack_tmp->dev_id)
 		{
-			//printf("$$$$$$$$$$$$$DevType:%d DevId:%d\n",dev_pack_tmp->dev_type,dev_pack_tmp->dev_id);
+			printf("$$$$$$$$$$$$$DevType:%d DevId:%d\n",dev_pack_tmp->dev_type,dev_pack_tmp->dev_id);
 			*len=dev_pack_tmp->data_len;
  			memcpy(buf,(uint8 *)&dev_pack_tmp->data_bak[0],dev_pack_tmp->data_len);
 			break;
 		}		
 		dev_pack_tmp++;		
-	}	
+	}
+
 }
+
+
+
 //保存处理过的数据，与下一包进行比较
 void data_proc_matrix_set_default_data(tba_bus_pack_t *ReceiveMsg)
 {
@@ -222,7 +226,7 @@ void data_proc_matrix_Dispatch(uint8 dev_type, uint8 dev_id,uint16 cmd, uint8 *b
 									}		
 								}
 								dev_proc_p++ ; 
-							}	
+							}							
 							return;
 						}
 						mode_matrix_p++;				

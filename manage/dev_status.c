@@ -32,6 +32,8 @@
 
 #define DEV_VALID	(1)
 #define DEV_UNVALID	(0)
+static uint8 device_status = 0;
+static uint8 tms_status = 0;
 
 typedef struct
 {
@@ -61,7 +63,7 @@ typedef struct
 }__attribute((packed))dev_status_t;
 //设备状态
 
-#if 0
+#if 1
 static dev_status_t dev_status_table[]=
 {	
 	{DEV_TYPE_PISC,1,"pisc","中央控制器1",DEV_VALID,DEV_STATUS_OK,"正常",0},
@@ -164,6 +166,7 @@ uint8 dev_status_get_dev_status(uint8 dev_type,uint8 dev_id)
 			&& dev_id==dev_status_table[i].dev_id)
 		{
 			return dev_status_table[i].dev_status;
+			
 		}
 		i++;
 	}
@@ -209,7 +212,7 @@ void dev_status_set_dev_status(uint8 dev_type, uint8 dev_id, uint8 status)
 				//获得设备状态的名称
 				dev_status_get_dev_status_name(dev_status_table[i].dev_status,dev_status_table[i].dev_status_name);
 				//写入日志
-				log_write_dev_status(dev_status_table[i].dev_name,dev_status_table[i].dev_status_name);
+				//log_write_dev_status(dev_status_table[i].dev_name,dev_status_table[i].dev_status_name);
 				
 			}
 			return;
@@ -231,19 +234,48 @@ static void* dev_status_thread(void* param)
 			dev_status_table[i].dev_timeout_num++;
 			if(dev_status_table[i].dev_timeout_num>=DEV_STATUS_TIMEOUT_NUM_MAX)
 			{
+				
 				//填充设备状态
 				dev_status_set_dev_status(dev_status_table[i].dev_type,dev_status_table[i].dev_id,DEV_STATUS_ERROR);
 				printf("+++++++table_dev_type:%d,id:%d,PisLocal_devid:%d\r\n",dev_status_table[i].dev_type,dev_status_table[i].dev_id,pisc_local_get_my_dev_id());
 				if(DEV_TYPE_PISC==dev_status_table[i].dev_type && (pisc_local_get_my_dev_id()!=dev_status_table[i].dev_id))
 				{
+					set_device_state(1);
 					//对端故障，处理主备
 					master_proc();
 				}
+				else					
+					set_device_state(0);
+#if 0				
+				if(DEV_TYPE_TMS==dev_status_table[i].dev_type)
+				{
+					set_tms_status(1);
+				}
+				else					
+					set_tms_status(0);
+#endif				
 			}
 			i++;
 		}
 		sleep(1);
 	}
+}
+uint8 get_tms_status(void)
+{
+	return tms_status;
+}
+void set_tms_status(uint8 status)
+{
+	return tms_status = status;
+}
+
+void set_device_state(uint8 status)
+{
+	device_status = status;
+}
+uint8 get_device_state(void)
+{
+	return device_status;
 }
 void	dev_status_thread_install(void)
 {

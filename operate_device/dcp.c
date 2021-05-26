@@ -266,9 +266,12 @@ static void dcp_live_broadcast(tba_bus_pack_t *ReceiveMsg)
 		//broadcast_proc(dev_type_tmp,dev_id_tmp,BROADCAST_LIVE);	//segment fault，不明原因
 		//led_onoff(MIC_LED_BIT,1);
 		//LED_Ctrl();
+		LED_Ctrl(LED_MIC,1);
 	}
 	else
 	{
+		
+		LED_Ctrl(LED_MIC,0);
 		//broadcast_stop_proc(BROADCAST_LIVE);
 	}	
 }
